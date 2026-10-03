@@ -1,0 +1,328 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   Toolieka — Bollywood Dance Classes
+   Thesis: the same family as her wedding site, turned up. Warm cream does the
+   reading; deep plum gives the weight; magenta carries every action; marigold is
+   the stage light — big shapes and highlights, never small text.
+
+   PALETTE, VERIFIED (WCAG relative-luminance contrast, computed, not eyeballed):
+     cream #FFF6E8   cream-warm #FBE9D0   plum #24102C   plum-soft #3A1745
+     magenta #B0104B   magenta-hot #C7185C   marigold #F5A800   rose #E9437D
+     plum     on cream        = 16.53:1  (AAA)
+     magenta  on cream        =  6.49:1  (AA — links, and button fills with cream text)
+     cream    on magenta-hot  =  5.28:1  (AA — button hover)
+     plum     on marigold     =  8.84:1  (AAA)
+     marigold on plum         =  8.84:1  (AAA — accent text on dark sections)
+     marigold on plum-soft    =  7.55:1  (AAA)
+     rose     on plum         =  4.69:1  (AA — large display accents only)
+     magenta  on plum         =  2.55:1  FAILS — magenta must never sit on plum
+     magenta  on marigold     =  3.47:1  large text only — never body copy
+   The two failing lines are constraints, not notes: dark sections resolve their
+   accent to marigold, enforced once below via [data-surface], not remembered at
+   each call site.
+
+   Motion is CSS only and is never required to see anything: no element starts
+   hidden, there is no JavaScript gate, and prefers-reduced-motion switches it off.
+   ========================================================================== */
+
+@theme {
+  --color-cream: #fff6e8;
+  --color-cream-warm: #fbe9d0;
+  --color-plum: #24102c;
+  --color-plum-soft: #3a1745;
+  --color-magenta: #b0104b;
+  --color-magenta-hot: #c7185c;
+  --color-marigold: #f5a800;
+  --color-rose: #e9437d;
+  --color-line: #e8d3b3;
+
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-mono: var(--font-mono), ui-monospace, monospace;
+}
+
+@layer base {
+  :root {
+    --accent: var(--color-magenta);
+    --accent-hot: var(--color-magenta-hot);
+    --on-accent: var(--color-cream);
+    --focus-ring: var(--color-magenta);
+  }
+  html {
+    background: var(--color-cream);
+    color: var(--color-plum);
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: var(--font-display);
+    overflow-x: hidden;
+  }
+  ::selection {
+    background: var(--color-magenta);
+    color: var(--color-cream);
+  }
+  :focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+}
+
+@layer components {
+  /* ── Surfaces: one place that decides text and accent colour ─────────── */
+  [data-surface="cream"] {
+    background: var(--color-cream);
+    color: var(--color-plum);
+    --accent: var(--color-magenta);
+    --accent-hot: var(--color-magenta-hot);
+    --on-accent: var(--color-cream);
+    --focus-ring: var(--color-magenta);
+  }
+  [data-surface="warm"] {
+    background: var(--color-cream-warm);
+    color: var(--color-plum);
+    --accent: var(--color-magenta);
+    --accent-hot: var(--color-magenta-hot);
+    --on-accent: var(--color-cream);
+    --focus-ring: var(--color-magenta);
+  }
+  [data-surface="sun"] {
+    background: var(--color-marigold);
+    color: var(--color-plum);
+    --accent: var(--color-plum);
+    --accent-hot: var(--color-plum-soft);
+    --on-accent: var(--color-cream);
+    --focus-ring: var(--color-plum);
+  }
+  [data-surface="plum"] {
+    background: var(--color-plum);
+    color: var(--color-cream);
+    --accent: var(--color-marigold);
+    --accent-hot: #ffbe33;
+    --on-accent: var(--color-plum);
+    --focus-ring: var(--color-marigold);
+  }
+
+  /* ── Type ────────────────────────────────────────────────────────────── */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+  }
+  .serif-accent {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* ── Buttons ─────────────────────────────────────────────────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.85rem 1.6rem;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+    transition: background-color 200ms ease, color 200ms ease, transform 200ms ease;
+    white-space: nowrap;
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  .btn-primary:hover {
+    background: var(--accent-hot);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: inherit;
+    border: 2px solid currentColor;
+  }
+  .btn-ghost:hover {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: var(--accent);
+  }
+
+  /* ── Cards, chips, rules ─────────────────────────────────────────────── */
+  .card {
+    background: #fffdf8;
+    border: 2px solid var(--color-plum);
+    border-radius: 1.25rem;
+  }
+  [data-surface="plum"] .card {
+    background: var(--color-plum-soft);
+    border-color: var(--color-marigold);
+  }
+  .chip {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    border: 1.5px solid currentColor;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .stripe {
+    height: 0.6rem;
+    background: repeating-linear-gradient(90deg, var(--color-magenta) 0 2.5rem, var(--color-marigold) 2.5rem 5rem, var(--color-plum) 5rem 7.5rem);
+  }
+
+  /* ── Form fields ─────────────────────────────────────────────────────── */
+  .field {
+    width: 100%;
+    min-height: 3rem;
+    border: 2px solid var(--color-plum);
+    background: #fffdf8;
+    color: var(--color-plum);
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.75rem;
+    font: inherit;
+    font-size: 1rem;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-magenta);
+    box-shadow: 0 0 0 3px rgba(176, 16, 75, 0.25);
+  }
+  .field-label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 800;
+    font-size: 0.85rem;
+  }
+  .check {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.35rem 0.9rem;
+    border: 2px solid var(--color-plum);
+    border-radius: 999px;
+    background: #fffdf8;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .check:has(input:checked) {
+    background: var(--color-plum);
+    color: var(--color-cream);
+  }
+  .check input {
+    accent-color: var(--color-magenta);
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  /* ── Entrance motion: CSS only; nothing starts hidden ────────────────── */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .rise {
+    animation: rise 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .rise-2 {
+    animation-delay: 120ms;
+  }
+  .rise-3 {
+    animation-delay: 240ms;
+  }
+
+  /* ── Post body: Markdown from ContentSathi (lib/contentsathi/Markdown.tsx) ── */
+  .post-body {
+    font-size: 1.08rem;
+    line-height: 1.75;
+  }
+  .post-body > * + * {
+    margin-top: 1.25rem;
+  }
+  .post-body h2,
+  .post-body h3,
+  .post-body h4 {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-top: 2.5rem;
+  }
+  .post-body h2 { font-size: 1.9rem; }
+  .post-body h3 { font-size: 1.45rem; }
+  .post-body h4 { font-size: 1.15rem; }
+  .post-body a {
+    color: var(--color-magenta);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .post-body ul,
+  .post-body ol { padding-left: 1.4rem; }
+  .post-body ul { list-style: disc; }
+  .post-body ol { list-style: decimal; }
+  .post-body li + li { margin-top: 0.45rem; }
+  .post-body blockquote {
+    border-left: 6px solid var(--color-marigold);
+    padding-left: 1.1rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.3rem;
+    line-height: 1.5;
+  }
+  .post-body code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--color-cream-warm);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+  .post-body hr {
+    border: 0;
+    height: 3px;
+    background: var(--color-line);
+    margin-block: 2.25rem;
+  }
+  .post-body img {
+    width: 100%;
+    height: auto;
+    border-radius: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rise {
+    animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}

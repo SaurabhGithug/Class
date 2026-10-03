@@ -1,0 +1,75 @@
+{
+  "_comment": "The typed-update contract, as examples. Read by BOTH test suites: the receiver's (typed.test.ts, here) and ContentSathi's (src/lib/website/__tests__/typed-content.test.ts). Every `valid` entry is already in its normal form, so parsing it must give back exactly what is written; every `invalid` entry must be refused by both. Change a rule in one place and these fail in the other.",
+  "schedule": {
+    "valid": [
+      {
+        "name": "a minimal confirmed schedule",
+        "data": {
+          "confirmed": true,
+          "note": "",
+          "classes": [
+            { "day": "Tue", "time": "After School", "clock": "", "location": "", "name": "Kids Bollywood", "level": "Ages 5–9", "audiences": ["kids"] }
+          ]
+        }
+      },
+      {
+        "name": "clock times, locations, a note and several audiences",
+        "data": {
+          "confirmed": false,
+          "note": "No classes 22 Dec – 2 Jan.",
+          "classes": [
+            { "day": "Mon", "time": "Evening", "clock": "6:30–7:30 pm", "location": "Schaumburg studio", "name": "Bollywood Beginner", "level": "Teens & Adults", "audiences": ["teens", "adults"] },
+            { "day": "Sat", "time": "Morning", "clock": "", "location": "Naperville", "name": "Semi-Classical", "level": "Kids & Teens", "audiences": ["kids", "teens"] }
+          ]
+        }
+      }
+    ],
+    "invalid": [
+      { "name": "an unknown field", "data": { "confirmed": true, "note": "", "price": "$20", "classes": [{ "day": "Mon", "time": "Evening", "clock": "", "location": "", "name": "A", "level": "B", "audiences": ["kids"] }] } },
+      { "name": "an unknown field on a class", "data": { "confirmed": true, "note": "", "classes": [{ "day": "Mon", "time": "Evening", "clock": "", "location": "", "name": "A", "level": "B", "audiences": ["kids"], "price": "$20" }] } },
+      { "name": "confirmed missing", "data": { "note": "", "classes": [{ "day": "Mon", "time": "Evening", "clock": "", "location": "", "name": "A", "level": "B", "audiences": ["kids"] }] } },
+      { "name": "confirmed not a boolean", "data": { "confirmed": "yes", "note": "", "classes": [{ "day": "Mon", "time": "Evening", "clock": "", "location": "", "name": "A", "level": "B", "audiences": ["kids"] }] } },
+      { "name": "no classes", "data": { "confirmed": true, "note": "", "classes": [] } },
+      { "name": "a day that is not a day", "data": { "confirmed": true, "note": "", "classes": [{ "day": "Funday", "time": "Evening", "clock": "", "location": "", "name": "A", "level": "B", "audiences": ["kids"] }] } },
+      { "name": "a time of day that is not one", "data": { "confirmed": true, "note": "", "classes": [{ "day": "Mon", "time": "Midnight", "clock": "", "location": "", "name": "A", "level": "B", "audiences": ["kids"] }] } },
+      { "name": "no audience", "data": { "confirmed": true, "note": "", "classes": [{ "day": "Mon", "time": "Evening", "clock": "", "location": "", "name": "A", "level": "B", "audiences": [] }] } },
+      { "name": "an audience that is not one", "data": { "confirmed": true, "note": "", "classes": [{ "day": "Mon", "time": "Evening", "clock": "", "location": "", "name": "A", "level": "B", "audiences": ["everyone"] }] } },
+      { "name": "an empty class name", "data": { "confirmed": true, "note": "", "classes": [{ "day": "Mon", "time": "Evening", "clock": "", "location": "", "name": "", "level": "B", "audiences": ["kids"] }] } },
+      { "name": "the same class twice", "data": { "confirmed": true, "note": "", "classes": [{ "day": "Mon", "time": "Evening", "clock": "", "location": "", "name": "A", "level": "B", "audiences": ["kids"] }, { "day": "Mon", "time": "Evening", "clock": "", "location": "", "name": "a", "level": "C", "audiences": ["teens"] }] } },
+      { "name": "classes is not a list", "data": { "confirmed": true, "note": "", "classes": "Monday" } },
+      { "name": "not an object", "data": "Monday 6pm" }
+    ]
+  },
+  "announcement": {
+    "valid": [
+      {
+        "name": "a banner with a link on this site",
+        "data": { "active": true, "text": "Spring batch registration is open.", "linkLabel": "See the classes", "linkHref": "/classes", "tone": "info", "startsAt": null, "expiresAt": null }
+      },
+      {
+        "name": "a notice with an https link and a window",
+        "data": { "active": true, "text": "Classes are cancelled on Saturday 14 March.", "linkLabel": "Details", "linkHref": "https://example.com/notice", "tone": "notice", "startsAt": "2026-03-10T00:00:00.000Z", "expiresAt": "2026-03-15T00:00:00.000Z" }
+      },
+      {
+        "name": "clearing the banner",
+        "data": { "active": false, "text": "", "linkLabel": "", "linkHref": "", "tone": "info", "startsAt": null, "expiresAt": null }
+      }
+    ],
+    "invalid": [
+      { "name": "an unknown field", "data": { "active": true, "text": "Hi", "color": "red" } },
+      { "name": "active without any words", "data": { "active": true, "text": "" } },
+      { "name": "active not a boolean", "data": { "active": "yes", "text": "Hi" } },
+      { "name": "a javascript: link", "data": { "active": true, "text": "Hi", "linkLabel": "Go", "linkHref": "javascript:alert(1)" } },
+      { "name": "a data: link", "data": { "active": true, "text": "Hi", "linkLabel": "Go", "linkHref": "data:text/html,<script>alert(1)</script>" } },
+      { "name": "an insecure http link", "data": { "active": true, "text": "Hi", "linkLabel": "Go", "linkHref": "http://example.com" } },
+      { "name": "a protocol-relative link", "data": { "active": true, "text": "Hi", "linkLabel": "Go", "linkHref": "//evil.example/x" } },
+      { "name": "a link with credentials", "data": { "active": true, "text": "Hi", "linkLabel": "Go", "linkHref": "https://user:pw@example.com" } },
+      { "name": "a link label with no link", "data": { "active": true, "text": "Hi", "linkLabel": "Go" } },
+      { "name": "a link with no label", "data": { "active": true, "text": "Hi", "linkHref": "/classes" } },
+      { "name": "expires before it starts", "data": { "active": true, "text": "Hi", "startsAt": "2026-03-10T00:00:00Z", "expiresAt": "2026-03-01T00:00:00Z" } },
+      { "name": "a date that is not a date", "data": { "active": true, "text": "Hi", "expiresAt": "next week" } },
+      { "name": "a tone that is not one", "data": { "active": true, "text": "Hi", "tone": "alarm" } },
+      { "name": "not an object", "data": "Closed today" }
+    ]
+  }
+}
