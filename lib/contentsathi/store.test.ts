@@ -138,6 +138,24 @@ test("githubStore refuses a repo, branch or directory that could redirect the wr
   assert.throws(() => githubStore({ repo: "owner/site", branch: "main", token: "t", dir: "../x", fetch: f }), ReceiverError);
 });
 
+test("storeFromEnv: settings pasted with a trailing newline still work, and blank ones count as unset", async () => {
+  const api = fakeGitHub();
+  const real = globalThis.fetch;
+  globalThis.fetch = api.impl;
+  try {
+    const store = storeFromEnv({ NODE_ENV: "production", GITHUB_CONTENT_TOKEN: "ghp_SECRET\n", GITHUB_CONTENT_REPO: " owner/site\n", GITHUB_CONTENT_BRANCH: "main\r\n" });
+    assert.equal(store?.kind, "github");
+    await store!.put(post());
+    const put = api.calls.at(-1)!;
+    assert.equal(put.headers.Authorization, "Bearer ghp_SECRET");
+    assert.ok(put.url.startsWith("https://api.github.com/repos/owner/site/contents/"), put.url);
+    assert.equal(put.body?.branch, "main");
+  } finally {
+    globalThis.fetch = real;
+  }
+  assert.equal(storeFromEnv({ NODE_ENV: "production", GITHUB_CONTENT_TOKEN: " \n", GITHUB_CONTENT_REPO: "o/s" }), null, "a blank token is no token");
+});
+
 test("storeFromEnv: explicit in production, never an implicit fs", () => {
   assert.equal(storeFromEnv({ NODE_ENV: "production" }), null, "production, nothing configured");
   assert.equal(storeFromEnv({ NODE_ENV: "production", GITHUB_CONTENT_TOKEN: "t" }), null, "token without repo");

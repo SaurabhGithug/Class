@@ -178,12 +178,15 @@ export function githubStore(opts: GitHubOptions): ContentStore {
  *          else fs outside production; else none.
  */
 export function storeFromEnv(env: Record<string, string | undefined>, cwd = process.cwd()): ContentStore | null {
-  const mode = env.CONTENT_STORE;
-  const token = env.GITHUB_CONTENT_TOKEN;
-  const repo = env.GITHUB_CONTENT_REPO;
+  // Values pasted into a host's settings often end in a newline. A token with one makes every GitHub
+  // request fail (a header value may not contain a line break) and a repo with one fails its check.
+  const value = (key: string) => env[key]?.trim() || undefined;
+  const mode = value("CONTENT_STORE");
+  const token = value("GITHUB_CONTENT_TOKEN");
+  const repo = value("GITHUB_CONTENT_REPO");
   if (mode === "github" || (!mode && token && repo)) {
     if (!token || !repo) return null;
-    return githubStore({ repo, token, branch: env.GITHUB_CONTENT_BRANCH || "main" });
+    return githubStore({ repo, token, branch: value("GITHUB_CONTENT_BRANCH") || "main" });
   }
   // Literal paths, for the same reason as in posts.ts: a bundler must be able to see the folder.
   if (mode === "fs" || (!mode && env.NODE_ENV !== "production")) return fsStore(path.join(cwd, "content", "blog"), path.join(cwd, "content"));
