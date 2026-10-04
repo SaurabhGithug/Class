@@ -87,33 +87,32 @@ export default async function Classes() {
   return (
     <>
       {/* ── Studio Hero ────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-[#24102C] text-white pt-24 pb-20 md:pt-36 md:pb-28">
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#B0104B]/20 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-0 left-10 w-[400px] h-[400px] bg-[#F5A800]/15 rounded-full blur-[130px] pointer-events-none" />
+      <section className="relative overflow-hidden bg-[#FFFDF9] text-[#1E0A28] pt-16 pb-20 md:pt-28 md:pb-24 border-b border-[#1E0A28]/10">
+        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-[#FFB300]/25 via-[#D81B60]/15 to-transparent rounded-full blur-[140px] pointer-events-none" />
 
         <div className="relative mx-auto max-w-[1280px] px-5 sm:px-8 z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#F5A800]/40 bg-[#F5A800]/10 text-[#F5A800] text-xs font-mono font-bold tracking-widest uppercase mb-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D81B60]/10 border border-[#D81B60]/20 text-[#D81B60] text-xs font-mono font-bold tracking-widest uppercase mb-6">
             Curriculum &amp; Schedule
           </div>
 
-          <h1 className="font-display font-extrabold text-[clamp(2.5rem,6.5vw,5rem)] tracking-tight leading-[1.02]">
+          <h1 className="font-display font-black text-[clamp(2.5rem,6.5vw,5rem)] tracking-tight leading-[1.02] text-[#1E0A28]">
             Find the right class. <br />
-            <span className="serif-accent font-normal text-rose">Train with film-grade energy.</span>
+            <span className="text-[#D81B60]">Train with film-grade energy.</span>
           </h1>
 
-          <p className="mt-6 max-w-2xl text-lg sm:text-xl text-white/80 leading-relaxed font-light">
+          <p className="mt-6 max-w-2xl text-lg sm:text-xl text-[#1E0A28]/80 leading-relaxed font-normal">
             From 4-year-old Little Movers discovering rhythm to adults seeking a joyful workout, our curriculum is calibrated by UNESCO/CID Paris certified director Toolieka.
           </p>
 
           {!confirmed && (
-            <div className="mt-8 max-w-2xl rounded-2xl border border-[#F5A800]/40 bg-white/[0.04] p-5 backdrop-blur-md">
-              <p className="font-bold text-[#F5A800] flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#F5A800] animate-ping" />
+            <div className="mt-8 max-w-2xl rounded-2xl border-2 border-amber-200 bg-amber-50/80 p-5">
+              <p className="font-bold text-[#1E0A28] flex items-center gap-2 text-sm">
+                <span className="w-2 h-2 rounded-full bg-[#D81B60] animate-ping" />
                 Live Schedule Notice
               </p>
-              <p className="mt-1 text-sm text-white/80 leading-relaxed">
+              <p className="mt-1 text-sm text-[#1E0A28]/80 leading-relaxed">
                 New term registrations are currently underway. Call or text the studio desk at{" "}
-                <a href={`tel:${site.phone}`} className="font-bold text-rose underline underline-offset-4">
+                <a href={`tel:${site.phone}`} className="font-bold text-[#D81B60] underline underline-offset-4">
                   {site.phoneDisplay}
                 </a>{" "}
                 for exact studio room allocations and drop-in trial availability.
@@ -122,21 +121,21 @@ export default async function Classes() {
           )}
 
           {note && (
-            <p className="mt-4 max-w-2xl rounded-2xl border border-white/20 bg-[#F5A800] px-5 py-3 text-sm font-bold text-[#24102C]">
+            <p className="mt-4 max-w-2xl rounded-2xl border border-white/20 bg-[#FFB300] px-5 py-3 text-sm font-bold text-[#1E0A28]">
               {note}
             </p>
           )}
 
           {/* Audience Filter Chips */}
           <div className="mt-10 flex flex-wrap gap-2.5">
-            <span className="text-xs font-mono uppercase tracking-widest text-white/50 self-center mr-2">
+            <span className="text-xs font-mono uppercase tracking-widest text-[#1E0A28]/50 self-center mr-2">
               Browse Category:
             </span>
             {audiences.map((a) => (
               <a
                 key={a.id}
                 href={`#${a.id}`}
-                className="chip hover:bg-[#B0104B] hover:text-white transition-all duration-200"
+                className="px-4 py-2 rounded-full bg-white border border-[#1E0A28]/15 text-xs font-bold text-[#1E0A28] hover:border-[#D81B60] hover:text-[#D81B60] transition-all shadow-sm"
               >
                 {a.label}
               </a>
@@ -217,16 +216,16 @@ export default async function Classes() {
       ))}
 
       {/* ── The Week at a Glance Timetable ─────────────────────── */}
-      <section className="bg-[#24102C] text-white py-20 sm:py-28 border-t border-white/10">
+      <section className="bg-[#FAF7F2] text-[#1E0A28] py-20 sm:py-28 border-t border-[#1E0A28]/10">
         <div className="mx-auto max-w-[1280px] px-5 sm:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="font-mono text-xs uppercase tracking-widest text-[#F5A800] font-bold">
+            <span className="font-mono text-xs uppercase tracking-widest text-[#D81B60] font-bold">
               Weekly Timetable
             </span>
-            <h2 className="font-display font-black text-[clamp(2rem,4vw,3.2rem)] tracking-tight mt-2">
+            <h2 className="font-display font-black text-[clamp(2rem,4vw,3.2rem)] tracking-tight mt-2 text-[#1E0A28]">
               The Week at a Glance
             </h2>
-            <p className="mt-3 text-white/70 text-sm">
+            <p className="mt-3 text-[#1E0A28]/70 text-sm">
               Multiple time slots accommodate after-school hours, weekend mornings, and evening adult sessions.
             </p>
           </div>
@@ -235,18 +234,18 @@ export default async function Classes() {
             {DAYS.filter((d) => classesOn(d, entries).length > 0).map((d) => (
               <div
                 key={d}
-                className="p-6 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-white/20 transition-colors"
+                className="p-6 rounded-2xl bg-white border border-[#1E0A28]/10 shadow-sm hover:border-[#D81B60]/40 transition-colors"
               >
-                <div className="flex items-center justify-between border-b border-white/15 pb-3">
-                  <h3 className="font-display font-bold text-lg text-white">{DAY_NAMES[d]}</h3>
-                  <span className="font-mono text-xs text-[#F5A800] font-bold">{d.toUpperCase()}</span>
+                <div className="flex items-center justify-between border-b border-[#1E0A28]/10 pb-3">
+                  <h3 className="font-display font-bold text-lg text-[#1E0A28]">{DAY_NAMES[d]}</h3>
+                  <span className="font-mono text-xs text-[#D81B60] font-bold">{d.toUpperCase()}</span>
                 </div>
 
                 <ul className="mt-4 space-y-4">
                   {classesOn(d, entries).map((c) => (
-                    <li key={c.name} className="border-b border-white/5 pb-3 last:border-b-0">
-                      <p className="font-bold text-sm text-white">{c.name}</p>
-                      <p className="text-xs text-white/60 mt-0.5">
+                    <li key={c.name} className="border-b border-[#1E0A28]/5 pb-3 last:border-b-0">
+                      <p className="font-bold text-sm text-[#1E0A28]">{c.name}</p>
+                      <p className="text-xs text-[#1E0A28]/60 mt-0.5">
                         {c.level} · {c.time}
                         {c.clock ? ` (${c.clock})` : ""}
                       </p>
