@@ -68,22 +68,44 @@ export default async function Home() {
           {/* Hero Action Image Card */}
           <div className="relative group">
             <div className="absolute -inset-2 rounded-[2.5rem] bg-gradient-to-tr from-[#D81B60] via-[#FFB300] to-[#FF4081] opacity-30 blur-2xl group-hover:opacity-50 transition duration-700" />
-            <div className="relative aspect-[4/5] sm:aspect-[1/1] lg:aspect-[4/5] overflow-hidden rounded-[2.25rem] border-2 border-[#1E0A28]/10 shadow-2xl bg-[#FAF7F2]">
+            
+            {/* Primary Stage Action Frame */}
+            <div className="relative aspect-[16/11] w-full overflow-hidden rounded-[2rem] border-2 border-[#1E0A28]/15 shadow-2xl bg-[#FAF7F2]">
               <Image
                 src={heroPhoto.src}
                 alt={heroPhoto.alt}
                 fill
                 priority
-                sizes="(min-width: 1024px) 45vw, 92vw"
+                sizes="(min-width: 1024px) 50vw, 95vw"
                 className="object-cover object-center group-hover:scale-105 transition duration-700 ease-out"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1E0A28]/80 via-transparent to-transparent" />
-              <div className="absolute bottom-5 left-5 right-5 p-4 rounded-xl bg-white/95 backdrop-blur-md border border-[#1E0A28]/10 text-[#1E0A28]">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1E0A28]/85 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 p-4 rounded-xl bg-white/95 backdrop-blur-md border border-[#1E0A28]/10 text-[#1E0A28] shadow-md">
                 <p className="font-mono text-[0.68rem] uppercase tracking-wider text-[#D81B60] font-bold">
-                  Annual Theater Showcase
+                  Annual Theater Showcase Stage
                 </p>
                 <p className="text-xs font-bold text-[#1E0A28] mt-0.5">
-                  Every enrolled dancer takes center stage under real theatrical lights.
+                  Over 450 dancers trained and performing on real theatrical stages with custom costumes.
+                </p>
+              </div>
+            </div>
+
+            {/* Overlapping Director Portrait Badge */}
+            <div className="absolute -bottom-6 -right-3 sm:-bottom-6 sm:-right-4 w-32 sm:w-40 aspect-[3/4] rounded-2xl overflow-hidden border-2 border-white shadow-2xl bg-black z-20">
+              <Image
+                src={photos.instructorMagenta.src}
+                alt={photos.instructorMagenta.alt}
+                fill
+                sizes="180px"
+                className="object-cover object-top"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              <div className="absolute bottom-2 left-2 right-2 text-center text-white">
+                <p className="font-display text-[10px] font-bold leading-tight">
+                  Toolieka Nikam
+                </p>
+                <p className="font-mono text-[7px] uppercase tracking-wider text-amber-300">
+                  Director &amp; UNESCO CID
                 </p>
               </div>
             </div>

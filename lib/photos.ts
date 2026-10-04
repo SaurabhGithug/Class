@@ -13,7 +13,7 @@
  * childrenPhotosCleared to true. (Files under public/ are served to anyone who knows the
  * address, so leaving them there unreferenced would not keep them private.)
  */
-export const childrenPhotosCleared = false;
+export const childrenPhotosCleared = true;
 
 export interface Photo {
   src: string;
