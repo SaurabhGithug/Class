@@ -7,6 +7,8 @@
  * owner's own uploads in bollywood/images (Mail/, tlob-site/), added 2026-11-20. Entries with a
  * section came from the rest of bollywood/images on the owner's instruction to add every image;
  * left out: exact duplicates, icons, a blank theme graphic and an Instagram profile picture.
+ * extra-nataraja-stage(-enhanced) were sent by the owner on 2026-11-20 (originals in
+ * bollywood/images/uploads); the -enhanced version has a digitally replaced backdrop.
  * screen-b4 and screen-d3 carry Getty Images watermarks and were added on the owner's instruction
  * (2026-11-20): they need a Getty licence; remove these two entries and files if there is none.
  */
@@ -26,6 +28,8 @@ export interface LibraryPhoto {
 }
 
 export const tlobLibrary: readonly LibraryPhoto[] = [
+  { file: "extra-nataraja-stage.jpg", w: 853, h: 1280, alt: "A dancer in a red and navy lehenga twirling on stage, arms open, in front of a bronze Nataraja backdrop" },
+  { file: "extra-nataraja-stage-enhanced.jpg", w: 853, h: 1280, alt: "The same twirl in a red and navy lehenga, with the backdrop digitally enhanced to a glowing Nataraja between temple pillars" },
   { file: "extra-sangeet-stage.jpg", w: 1400, h: 906, alt: "A sangeet celebration on stage under red stage lights, guests in lehengas and sarees (photo: Rutul Photography)" },
   { file: "extra-solo-stage.jpg", w: 933, h: 1400, alt: "Toolieka performing solo on stage in front of a Durga backdrop" },
   { file: "extra-white-jackets-stairs.jpg", w: 1239, h: 1400, alt: "A dance team in white jackets and black outfits posing on a staircase" },
