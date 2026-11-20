@@ -44,4 +44,4 @@ export const beyondClass =
   "Private events, sangeet, mehendi, corporate and community performances.";
 
 export const tagline =
-  "Authentic Bollywood, classical and fusion dance for kids, teens and adults — in Schaumburg, Naperville and across the USA.";
+  "Authentic Bollywood, classical and fusion dance for kids, teens and adults — across the USA.";

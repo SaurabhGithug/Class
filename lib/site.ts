@@ -14,18 +14,20 @@ const vercelUrl = env.VERCEL_PROJECT_PRODUCTION_URL?.trim() || "";
 export const siteUrlConfigured = Boolean(configuredUrl);
 
 export const site = {
+  /** The teacher and founder. */
   name: "Toolieka Prakash Nikam",
   short: "Toolieka",
-  // The trading name of the classes is unconfirmed; this is what her site calls her.
-  brand: "Toolieka — Bollywood Dance Classes",
+  /** The classes trade as The Legends of Bollywood (confirmed by the owner, 2026-11-20). */
+  brand: "The Legends of Bollywood",
+  brandShort: "TLOB",
   phone: "+12242583880",
   phoneDisplay: "224.258.3880",
   email: "tlobcali@gmail.com",
-  basedIn: "Chicago, Illinois",
-  areas: ["Schaumburg, Illinois", "Naperville, Illinois"],
+  /** Where the site says classes are. Cities are left out on purpose until the owner names them. */
+  serves: "the USA",
   instagram: [
-    { handle: "@choreographer_toolieka", url: "https://www.instagram.com/choreographer_toolieka/" },
     { handle: "@tlob_usa", url: "https://www.instagram.com/tlob_usa" },
+    { handle: "@choreographer_toolieka", url: "https://www.instagram.com/choreographer_toolieka/" },
     { handle: "@tea_t_tee_", url: "https://www.instagram.com/tea_t_tee_/" },
   ],
   /**

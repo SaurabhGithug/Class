@@ -1,367 +1,168 @@
 import Image from "next/image";
 import Link from "next/link";
-import ClassMatcher from "@/components/ClassMatcher";
-import StudioReviews from "@/components/StudioReviews";
 import { AUDIENCES, classesFor } from "@/lib/classes";
 import { beyondClass, bio, credentials, styles, tagline } from "@/lib/content";
+import { formatDate } from "@/lib/contentsathi/format.ts";
+import { excerpt, listPublished } from "@/lib/contentsathi/posts.ts";
 import { heroPhoto, onStage, photos } from "@/lib/photos";
 import { loadSchedule } from "@/lib/schedule-source";
 import { site } from "@/lib/site";
+import WeekFinder, { type FinderGroup } from "@/components/WeekFinder";
 
 export default async function Home() {
-  const { entries } = await loadSchedule();
-  const groups = AUDIENCES.map((a) => ({ a, n: classesFor(a.id, entries).length })).filter((g) => g.n > 0);
+  const posts = (await listPublished()).slice(0, 3);
+  const { entries, confirmed, note } = await loadSchedule();
+  const groups: FinderGroup[] = AUDIENCES.map((a) => ({ id: a.id, label: a.label, blurb: a.blurb, classes: classesFor(a.id, entries) })).filter(
+    (g) => g.classes.length > 0,
+  );
 
   return (
     <>
-      {/* ══════════════ 1. RADIANT, SUNNY STUDIO HERO ══════════════ */}
-      <section className="relative overflow-hidden bg-[#FFFDF9] text-[#1E0A28] pt-12 pb-20 sm:pt-20 sm:pb-28 border-b border-[#1E0A28]/10">
-        {/* Energetic sunburst aura */}
-        <div className="absolute -top-32 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-[#FFB300]/25 via-[#D81B60]/15 to-transparent rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute top-1/2 -left-20 w-[400px] h-[400px] bg-[#D81B60]/10 rounded-full blur-[130px] pointer-events-none" />
-
-        <div className="relative z-10 mx-auto grid max-w-[1280px] gap-12 px-5 sm:px-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#D81B60]/10 border border-[#D81B60]/20 text-[#D81B60] text-xs font-bold uppercase tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-[#D81B60] animate-pulse" />
-              Schaumburg &amp; Naperville, IL · Spring Term Open
-            </div>
-
-            <h1 className="font-display font-black text-[clamp(2.75rem,7vw,5.5rem)] text-[#1E0A28] leading-[0.98] tracking-tight">
-              Energy, Rhythm, &amp; <br />
-              <span className="text-[#D81B60]">Stage Confidence.</span>
+      {/* ══ HERO: the promise, then the week ══ */}
+      <section data-surface="cream" className="overflow-hidden">
+        <div className="mx-auto grid max-w-[1280px] gap-12 px-5 pb-14 pt-12 sm:px-8 md:pt-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+          <div>
+            <p className="kicker rise">The Legends of Bollywood, with Toolieka Prakash Nikam</p>
+            <h1 className="display rise rise-2 mt-4 text-[clamp(2.6rem,6.6vw,5.4rem)]">
+              Learn Bollywood from a <span className="whitespace-nowrap">film-industry</span> performer.
             </h1>
-
-            <p className="max-w-xl text-lg sm:text-xl leading-relaxed text-[#1E0A28]/80 font-normal">
-              Chicagoland&rsquo;s premier Bollywood dance academy for <strong className="text-[#1E0A28] font-bold">Kids (from age 4)</strong>, <strong className="text-[#1E0A28] font-bold">Teens</strong>, and <strong className="text-[#1E0A28] font-bold">Adult Beginners</strong>. Directed by UNESCO/CID Paris certified artist Toolieka Prakash Nikam.
-            </p>
-
-            <div className="pt-2 flex flex-wrap items-center gap-4">
-              <Link
-                href="/contact"
-                className="btn btn-primary text-sm font-bold shadow-xl shadow-[#D81B60]/30 hover:scale-105 transition-all"
-              >
-                Claim $20 Trial Class Pass
-              </Link>
-              <Link
-                href="/classes"
-                className="px-6 py-3.5 rounded-full border-2 border-[#1E0A28]/15 bg-white text-[#1E0A28] font-bold text-sm hover:border-[#D81B60] hover:text-[#D81B60] transition-colors"
-              >
-                View Weekly Timetable →
-              </Link>
-            </div>
-
-            {/* Authority Badges */}
-            <div className="pt-6 border-t border-[#1E0A28]/10 flex flex-wrap gap-2 text-xs font-mono font-bold text-[#1E0A28]/80">
-              <span className="px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-800">
-                ★ 4.9/5 Rating (450+ Families)
-              </span>
-              <span className="px-3 py-1.5 rounded-lg bg-pink-50 border border-pink-200 text-pink-800">
-                UNESCO CID Paris Certified
-              </span>
-              <span className="px-3 py-1.5 rounded-lg bg-purple-50 border border-purple-200 text-purple-800">
-                Sprung Hardwood Floors
-              </span>
+            <p className="rise rise-3 mt-6 max-w-xl text-lg leading-relaxed text-plum/85 sm:text-xl">{tagline}</p>
+            <div className="rise rise-3 mt-8 flex flex-wrap gap-3">
+              <Link href="/contact" className="btn btn-primary">Book a trial class</Link>
+              <a href={`tel:${site.phone}`} className="btn btn-ghost">Call {site.phoneDisplay}</a>
             </div>
           </div>
-
-          {/* Hero Action Image Card */}
-          <div className="relative group">
-            <div className="absolute -inset-2 rounded-[2.5rem] bg-gradient-to-tr from-[#D81B60] via-[#FFB300] to-[#FF4081] opacity-30 blur-2xl group-hover:opacity-50 transition duration-700" />
-            
-            {/* Primary Stage Action Frame */}
-            <div className="relative aspect-[16/11] w-full overflow-hidden rounded-[2rem] border-2 border-[#1E0A28]/15 shadow-2xl bg-[#FAF7F2]">
-              <Image
-                src={heroPhoto.src}
-                alt={heroPhoto.alt}
-                fill
-                priority
-                sizes="(min-width: 1024px) 50vw, 95vw"
-                className="object-cover object-center group-hover:scale-105 transition duration-700 ease-out"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1E0A28]/85 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 p-4 rounded-xl bg-white/95 backdrop-blur-md border border-[#1E0A28]/10 text-[#1E0A28] shadow-md">
-                <p className="font-mono text-[0.68rem] uppercase tracking-wider text-[#D81B60] font-bold">
-                  Annual Theater Showcase Stage
-                </p>
-                <p className="text-xs font-bold text-[#1E0A28] mt-0.5">
-                  Over 450 dancers trained and performing on real theatrical stages with custom costumes.
-                </p>
-              </div>
-            </div>
-
-            {/* Overlapping Director Portrait Badge */}
-            <div className="absolute -bottom-6 -right-3 sm:-bottom-6 sm:-right-4 w-32 sm:w-40 aspect-[3/4] rounded-2xl overflow-hidden border-2 border-white shadow-2xl bg-black z-20">
-              <Image
-                src={photos.instructorMagenta.src}
-                alt={photos.instructorMagenta.alt}
-                fill
-                sizes="180px"
-                className="object-cover object-top"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-              <div className="absolute bottom-2 left-2 right-2 text-center text-white">
-                <p className="font-display text-[10px] font-bold leading-tight">
-                  Toolieka Nikam
-                </p>
-                <p className="font-mono text-[7px] uppercase tracking-wider text-amber-300">
-                  Director &amp; UNESCO CID
-                </p>
-              </div>
-            </div>
+          <div className="rise rise-2 relative mx-auto w-full max-w-md lg:max-w-none">
+            <div aria-hidden="true" className="absolute -bottom-4 -left-4 h-full w-full rounded-[1.75rem] bg-marigold" />
+            <Image
+              src={heroPhoto.src}
+              alt={heroPhoto.alt}
+              width={heroPhoto.w}
+              height={heroPhoto.h}
+              priority
+              sizes="(min-width: 1024px) 36vw, 92vw"
+              className="relative aspect-[4/3.6] w-full rounded-[1.75rem] border-4 border-plum object-cover"
+            />
           </div>
+        </div>
+        <div className="mx-auto max-w-[1280px] px-3 pb-20 sm:px-8 md:pb-28">
+          <WeekFinder groups={groups} confirmed={confirmed} note={note} phone={site.phone} phoneDisplay={site.phoneDisplay} />
         </div>
       </section>
 
-      {/* ══════════════ 2. KINETIC TICKER MARQUEE ══════════════ */}
-      <div className="bg-[#1E0A28] text-white py-3.5 overflow-hidden whitespace-nowrap border-y border-[#1E0A28]/20">
-        <div className="inline-block animate-marquee text-xs font-mono uppercase tracking-[0.2em] font-bold text-amber-300">
-          BOLLYWOOD COMMERCIAL • KATHAK CLASSICAL FUSION • BHANGRA CARDIO • HIP HOP FUSION • AGES 4 TO ADULT • SPRUNG HARDWOOD FLOORS • 100% MONEY-BACK TRIAL GUARANTEE • SPRING TERM NOW ENROLLING •
-        </div>
-      </div>
-
-      {/* ══════════════ 3. INTERACTIVE 10-SECOND CLASS MATCHER ══════════════ */}
-      <section className="bg-[#FAF7F2] py-20 sm:py-28 border-b border-[#1E0A28]/10">
-        <div className="mx-auto max-w-[1280px] px-5 sm:px-8">
-          <ClassMatcher />
-        </div>
-      </section>
-
-      {/* ══════════════ 4. WHY PARENTS & DANCERS LOVE OUR ACADEMY ══════════════ */}
-      <section className="bg-white py-20 sm:py-28 border-b border-[#1E0A28]/10">
-        <div className="mx-auto max-w-[1280px] px-5 sm:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="font-mono text-xs uppercase tracking-widest text-[#D81B60] font-bold block mb-2">
-              The Studio Standard
-            </span>
-            <h2 className="font-display font-black text-[clamp(2.2rem,4.5vw,3.8rem)] text-[#1E0A28] tracking-tight">
-              Why Chicagoland Families Choose Toolieka
-            </h2>
-            <p className="mt-3 text-[#1E0A28]/70 text-base">
-              A studio environment engineered for physical safety, technical excellence, and infectious joy.
-            </p>
-          </div>
-
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="p-7 rounded-3xl bg-[#FAF7F2] border border-[#1E0A28]/10 hover:border-[#D81B60] transition-colors">
-              <div className="w-12 h-12 rounded-2xl bg-[#D81B60]/10 text-[#D81B60] flex items-center justify-center text-2xl font-bold mb-4">
-                🛡️
-              </div>
-              <h3 className="font-display font-bold text-xl text-[#1E0A28] mb-2">
-                Sprung Hardwood Floors
-              </h3>
-              <p className="text-xs sm:text-sm text-[#1E0A28]/75 leading-relaxed">
-                Both our Schaumburg and Naperville studios feature shock-absorbing sprung dance floors to protect developing children&rsquo;s joints and adult knees.
-              </p>
-            </div>
-
-            <div className="p-7 rounded-3xl bg-[#FAF7F2] border border-[#1E0A28]/10 hover:border-[#D81B60] transition-colors">
-              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-2xl font-bold mb-4">
-                🎭
-              </div>
-              <h3 className="font-display font-bold text-xl text-[#1E0A28] mb-2">
-                Annual Theater Showcase
-              </h3>
-              <p className="text-xs sm:text-sm text-[#1E0A28]/75 leading-relaxed">
-                No dance studio experience is complete without performing. Every student dances in our grand annual theater recital with custom costumes and lighting.
-              </p>
-            </div>
-
-            <div className="p-7 rounded-3xl bg-[#FAF7F2] border border-[#1E0A28]/10 hover:border-[#D81B60] transition-colors">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-2xl font-bold mb-4">
-                🤝
-              </div>
-              <h3 className="font-display font-bold text-xl text-[#1E0A28] mb-2">
-                100% Love-It Guarantee
-              </h3>
-              <p className="text-xs sm:text-sm text-[#1E0A28]/75 leading-relaxed">
-                If your dancer does not leave their trial class smiling and excited, your $20 trial fee is refunded immediately. Zero financial risk.
-              </p>
-            </div>
-
-            <div className="p-7 rounded-3xl bg-[#FAF7F2] border border-[#1E0A28]/10 hover:border-[#D81B60] transition-colors">
-              <div className="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-500 flex items-center justify-center text-2xl font-bold mb-4">
-                👑
-              </div>
-              <h3 className="font-display font-bold text-xl text-[#1E0A28] mb-2">
-                UNESCO Certified Master
-              </h3>
-              <p className="text-xs sm:text-sm text-[#1E0A28]/75 leading-relaxed">
-                Taught directly by Toolieka Prakash Nikam, certified by the International Dance Council at UNESCO Paris and 13+ years on Bollywood film sets.
-              </p>
-            </div>
-          </div>
+      {/* ══ STYLES ══ */}
+      <section data-surface="sun">
+        <div className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8 md:py-28">
+          <p className="kicker !text-plum">Styles</p>
+          <h2 className="display mt-3 max-w-2xl text-[clamp(2rem,5vw,3.6rem)]">Four ways to move.</h2>
+          <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {styles.map((s) => (
+              <li key={s.name} className="card p-6">
+                <p className="display text-2xl">{s.name}</p>
+                <p className="mt-3 leading-relaxed text-plum/85">{s.line}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
-      {/* ══════════════ 5. TRANSPARENT TUITION PASSES ══════════════ */}
-      <section className="bg-[#FAF7F2] py-20 sm:py-28 border-b border-[#1E0A28]/10">
-        <div className="mx-auto max-w-[1280px] px-5 sm:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="font-mono text-xs uppercase tracking-widest text-[#D81B60] font-bold block mb-2">
-              Straightforward Pricing
-            </span>
-            <h2 className="font-display font-black text-[clamp(2.2rem,4.5vw,3.8rem)] text-[#1E0A28] tracking-tight">
-              Honest, Transparent Class Passes
-            </h2>
-            <p className="mt-3 text-[#1E0A28]/70 text-base">
-              No hidden annual registration fees, uniform markups, or lock-in contracts.
-            </p>
-          </div>
-
-          <div className="grid gap-8 lg:grid-cols-3 items-stretch">
-            {/* Trial Pass */}
-            <div className="p-8 rounded-3xl bg-white border border-[#1E0A28]/10 shadow-lg flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 inline-block mb-4">
-                  Step 1 · Try A Class
-                </span>
-                <h3 className="font-display font-black text-2xl text-[#1E0A28]">Single Trial Pass</h3>
-                <div className="flex items-baseline gap-2 my-4">
-                  <span className="font-display font-black text-5xl text-[#1E0A28]">$20</span>
-                  <span className="text-xs font-mono text-[#1E0A28]/60">One-time introduction</span>
+      {/* ══ MEET TOOLIEKA ══ */}
+      <section data-surface="warm">
+        <div className="mx-auto grid max-w-[1280px] gap-12 px-5 py-20 sm:px-8 md:py-28 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <Image
+            src={photos.instructorMagenta.src}
+            alt={photos.instructorMagenta.alt}
+            width={photos.instructorMagenta.w}
+            height={photos.instructorMagenta.h}
+            sizes="(min-width: 1024px) 34vw, 92vw"
+            className="mx-auto w-full max-w-md rounded-[1.75rem] border-4 border-plum object-cover"
+          />
+          <div>
+            <p className="kicker">Your teacher</p>
+            <h2 className="display mt-3 text-[clamp(2rem,5vw,3.4rem)]">Meet Toolieka.</h2>
+            <p className="mt-6 text-lg leading-relaxed">{bio.lead}</p>
+            <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-6 border-t-2 border-plum pt-8">
+              {credentials.map((c) => (
+                <div key={c.label}>
+                  <dt className="display text-4xl text-magenta">{c.value}</dt>
+                  <dd className="mt-1 text-sm font-bold leading-snug">{c.label}</dd>
                 </div>
-                <p className="text-xs text-[#1E0A28]/70 leading-relaxed mb-6">
-                  Experience any 60-minute class. 100% of the $20 fee is credited toward your term session upon enrollment.
-                </p>
-                <ul className="space-y-3 text-xs text-[#1E0A28]/80 mb-8">
-                  <li className="flex items-center gap-2">✓ Full 60-min studio class experience</li>
-                  <li className="flex items-center gap-2">✓ Direct level assessment with Toolieka</li>
-                  <li className="flex items-center gap-2">✓ Parent observation permitted</li>
-                </ul>
-              </div>
-              <Link
-                href="/contact"
-                className="w-full py-3.5 rounded-xl border-2 border-[#1E0A28] text-[#1E0A28] font-bold text-xs uppercase tracking-wider text-center hover:bg-[#1E0A28] hover:text-white transition-all block"
-              >
-                Claim $20 Trial Pass
-              </Link>
-            </div>
+              ))}
+            </dl>
+            <Link href="/about" className="btn btn-ghost mt-9">Read her story</Link>
+          </div>
+        </div>
+      </section>
 
-            {/* Core 8-Week Session (Highlighted) */}
-            <div className="p-8 rounded-3xl bg-[#1E0A28] text-white shadow-2xl scale-105 z-10 border-2 border-[#D81B60] flex flex-col justify-between relative">
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-[#D81B60] to-[#FF4081] text-white text-[0.68rem] font-mono font-bold uppercase tracking-wider shadow-lg">
-                Most Popular for Families
-              </span>
+      {/* ══ ON STAGE ══ */}
+      <section data-surface="plum">
+        <div className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8 md:py-28">
+          <p className="kicker">On stage</p>
+          <h2 className="display mt-3 max-w-2xl text-[clamp(2rem,5vw,3.6rem)]">{onStage.heading}</h2>
+          <p className="mt-5 max-w-xl text-cream/80">{onStage.line}</p>
+          <ul className="mt-12 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-5">
+            {onStage.photos.map((ph) => (
+              <li key={ph.src} className="aspect-[4/5] overflow-hidden rounded-2xl border-2 border-marigold">
+                <Image src={ph.src} alt={ph.alt} width={ph.w} height={ph.h} sizes="(min-width: 768px) 25vw, 46vw" className="h-full w-full object-cover" />
+              </li>
+            ))}
+          </ul>
+          <Link href="/gallery" className="btn btn-ghost mt-10">See the gallery</Link>
+        </div>
+      </section>
+
+      {/* ══ BEYOND THE CLASSROOM ══ */}
+      <section data-surface="cream">
+        <div className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8 md:py-24">
+          <p className="kicker">Beyond the classroom</p>
+          <p className="display mt-4 max-w-3xl text-[clamp(1.6rem,3.6vw,2.6rem)] !leading-[1.1]">{beyondClass}</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/contact" className="btn btn-primary">Ask about an event</Link>
+            {site.weddingsUrl && (
+              <a href={site.weddingsUrl} className="btn btn-ghost">Wedding choreography</a>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ JOURNAL (only when there is something in it) ══ */}
+      {posts.length > 0 && (
+        <section data-surface="warm">
+          <div className="mx-auto max-w-[1280px] px-5 py-20 sm:px-8 md:py-24">
+            <div className="flex items-end justify-between gap-6">
               <div>
-                <span className="text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/10 text-amber-300 inline-block mb-4">
-                  Step 2 · Seasonal Term
-                </span>
-                <h3 className="font-display font-black text-2xl text-white">8-Week Seasonal Term</h3>
-                <div className="flex items-baseline gap-2 my-4">
-                  <span className="font-display font-black text-5xl text-white">$185</span>
-                  <span className="text-xs font-mono text-white/60">Per 8-week term</span>
-                </div>
-                <p className="text-xs text-white/80 leading-relaxed mb-6">
-                  Our signature progressive curriculum. Dancers learn complete choreography, posture, and prepare for the recital stage.
-                </p>
-                <ul className="space-y-3 text-xs text-white/90 mb-8">
-                  <li className="flex items-center gap-2"><span className="text-amber-300 font-bold">✓</span> 1 scheduled weekly 60-min class</li>
-                  <li className="flex items-center gap-2"><span className="text-amber-300 font-bold">✓</span> Access to 4K practice video review portal</li>
-                  <li className="flex items-center gap-2"><span className="text-amber-300 font-bold">✓</span> Recital stage choreography inclusion</li>
-                  <li className="flex items-center gap-2"><span className="text-amber-300 font-bold">✓</span> 1 excused makeup class per term</li>
-                </ul>
+                <p className="kicker">Journal</p>
+                <h2 className="display mt-3 text-[clamp(2rem,5vw,3.2rem)]">Latest from the studio.</h2>
               </div>
-              <Link
-                href="/contact"
-                className="btn btn-primary w-full py-4 text-xs font-bold uppercase tracking-wider text-center shadow-xl block"
-              >
-                Enroll In 8-Week Term →
-              </Link>
+              <Link href="/blog" className="font-extrabold text-magenta underline underline-offset-4">All articles</Link>
             </div>
+            <ul className="mt-10 grid gap-5 md:grid-cols-3">
+              {posts.map((p) => (
+                <li key={p.slug}>
+                  <Link href={`/blog/${p.slug}`} className="card block h-full p-6 hover:-translate-y-1 hover:shadow-lg">
+                    <p className="kicker">{p.category}</p>
+                    <p className="display mt-3 text-2xl !leading-tight">{p.title}</p>
+                    <p className="mt-3 leading-relaxed text-plum/80">{excerpt(p, 120)}</p>
+                    <p className="mt-4 text-sm font-bold text-plum/60">{formatDate(p.publishedAt)}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
-            {/* All-Access Master Pass */}
-            <div className="p-8 rounded-3xl bg-white border border-[#1E0A28]/10 shadow-lg flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-purple-50 text-purple-800 inline-block mb-4">
-                  Passionate Dancers
-                </span>
-                <h3 className="font-display font-black text-2xl text-[#1E0A28]">All-Access Master Pass</h3>
-                <div className="flex items-baseline gap-2 my-4">
-                  <span className="font-display font-black text-5xl text-[#1E0A28]">$320</span>
-                  <span className="text-xs font-mono text-[#1E0A28]/60">Per 8-week term</span>
-                </div>
-                <p className="text-xs text-[#1E0A28]/70 leading-relaxed mb-6">
-                  For dancers wanting to master multiple styles: train in Bollywood, Classical Kathak, and Hip Hop simultaneously.
-                </p>
-                <ul className="space-y-3 text-xs text-[#1E0A28]/80 mb-8">
-                  <li className="flex items-center gap-2">✓ Unlimited weekly classes across styles</li>
-                  <li className="flex items-center gap-2">✓ Showcase Troupe audition priority</li>
-                  <li className="flex items-center gap-2">✓ Guest choreographer masterclass access</li>
-                </ul>
-              </div>
-              <Link
-                href="/contact"
-                className="w-full py-3.5 rounded-xl border-2 border-[#1E0A28] text-[#1E0A28] font-bold text-xs uppercase tracking-wider text-center hover:bg-[#1E0A28] hover:text-white transition-all block"
-              >
-                Inquire All-Access Pass
-              </Link>
-            </div>
+      {/* ══ FINAL CTA ══ */}
+      <section data-surface="sun">
+        <div className="mx-auto max-w-[1280px] px-5 py-20 text-center sm:px-8 md:py-28">
+          <h2 className="display mx-auto max-w-3xl text-[clamp(2.2rem,6vw,4.4rem)]">Ready to try a class?</h2>
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed">Tell us who is dancing and what they would like to try. Toolieka will get back to you.</p>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+            <Link href="/contact" className="btn btn-primary">Book a trial class</Link>
+            <a href={`tel:${site.phone}`} className="btn btn-ghost">{site.phoneDisplay}</a>
           </div>
         </div>
       </section>
-
-      {/* ══════════════ 6. GOOGLE REVIEWS & SOCIAL PROOF ══════════════ */}
-      <section className="bg-white py-20 sm:py-28 border-b border-[#1E0A28]/10">
-        <div className="mx-auto max-w-[1280px] px-5 sm:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="font-mono text-xs uppercase tracking-widest text-[#D81B60] font-bold block mb-2">
-              Community Trust
-            </span>
-            <h2 className="font-display font-black text-[clamp(2.2rem,4.5vw,3.8rem)] text-[#1E0A28] tracking-tight">
-              What Chicagoland Parents Say
-            </h2>
-            <p className="mt-3 text-[#1E0A28]/70 text-base">
-              Real stories from families whose dancers found poise, technique, and lifelong stage confidence.
-            </p>
-          </div>
-
-          <StudioReviews />
-        </div>
-      </section>
-
-      {/* ══════════════ 7. CLOSING STUDIO REGISTRATION BANNER ══════════════ */}
-      <section className="bg-[#1E0A28] text-white py-20 sm:py-28 text-center relative overflow-hidden">
-        <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#D81B60]/20 rounded-full blur-[140px] pointer-events-none" />
-        <div className="relative z-10 mx-auto max-w-[1280px] px-5 sm:px-8">
-          <span className="font-mono text-xs uppercase tracking-widest text-amber-300 font-bold mb-3 block">
-            Spring Term Enrollment Open
-          </span>
-          <h2 className="font-display font-black text-[clamp(2.4rem,5.5vw,4.5rem)] tracking-tight max-w-3xl mx-auto leading-tight">
-            Step onto the studio floor this week.
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-lg text-white/80 font-light">
-            Claim your $20 trial class pass. If you or your child doesn&rsquo;t love it, we refund your $20 immediately.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <Link href="/contact" className="btn btn-primary px-9 py-4 text-sm font-bold shadow-2xl">
-              Claim $20 Trial Pass Now
-            </Link>
-            <a
-              href={`tel:${site.phone}`}
-              className="px-8 py-4 rounded-full border border-white/20 bg-white/5 text-white font-bold text-sm hover:bg-white/10 transition"
-            >
-              Call Studio: {site.phoneDisplay}
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════ FLOATING MOBILE BOOKING BAR (Conversion Booster) ══════════════ */}
-      <div className="fixed inset-x-4 bottom-4 z-40 flex gap-2 sm:hidden">
-        <a
-          href={`tel:${site.phone}`}
-          className="flex-1 py-3 text-center rounded-xl bg-white border border-[#1E0A28]/20 font-bold text-xs text-[#1E0A28] shadow-xl"
-        >
-          Call Studio
-        </a>
-        <Link
-          href="/contact"
-          className="flex-[2] py-3 text-center rounded-xl bg-gradient-to-r from-[#D81B60] to-[#FF4081] text-white font-bold text-xs uppercase tracking-wider shadow-xl"
-        >
-          Book $20 Trial Pass →
-        </Link>
-      </div>
     </>
   );
 }

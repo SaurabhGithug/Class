@@ -6,223 +6,102 @@ import { styles } from "@/lib/content";
 import { site } from "@/lib/site";
 import { FOR_WHOM, LEVELS, buildTrialRequest } from "@/lib/trial";
 
+/**
+ * Trial-class request.
+ *
+ * DELIVERY MODEL — deliberate: submitting opens a prefilled email in the visitor's
+ * own mail app instead of POSTing to a server. A server endpoint needs an email
+ * provider and a key, and until one is configured a POST form silently swallows
+ * enquiries — the single most expensive bug a site like this can have. A mailto
+ * handoff cannot fail silently: either the mail app opens, or the visitor sees it
+ * did not and the phone number is right there. The limitation is said on the page.
+ * When a provider exists, replace handleSubmit with a server action and keep the
+ * field names; lib/trial.ts is the part worth keeping.
+ */
 export default function TrialForm() {
   const [sent, setSent] = useState(false);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const req = buildTrialRequest(new FormData(e.currentTarget), site.email);
-    window.location.href = req.href;
+    window.location.href = buildTrialRequest(new FormData(e.currentTarget), site.email).href;
     setSent(true);
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
-      {/* Notice Card */}
-      <div className="p-4 rounded-xl bg-[#24102C]/5 border border-[#24102C]/10 text-sm leading-relaxed text-[#24102C]/80">
-        <p className="font-bold text-[#B0104B] mb-0.5">Quick Studio Booking Notice</p>
-        Submitting this form prepares your trial class pass request directly to Toolieka. If your email app does not open immediately, call or text us at{" "}
-        <a href={`tel:${site.phone}`} className="font-bold text-[#B0104B] underline underline-offset-2">
+    <form onSubmit={handleSubmit} className="space-y-10">
+      <p className="rounded-xl border-2 border-dashed border-plum/40 p-4 text-sm leading-relaxed">
+        Sending this opens a ready-written email in your own mail app — it is not a booking system, and nothing is
+        confirmed until Toolieka replies. If it does not open, call{" "}
+        <a href={`tel:${site.phone}`} className="font-extrabold text-magenta underline underline-offset-4">
           {site.phoneDisplay}
         </a>
         .
-      </div>
+      </p>
 
-      {/* ── Dancer Profile ────────────────────────────────────────── */}
-      <fieldset className="space-y-4">
-        <legend className="font-mono text-xs uppercase tracking-widest text-[#B0104B] font-bold">
-          01. Dancer Information
-        </legend>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <label className="block text-xs font-bold text-[#24102C]/80 uppercase tracking-wider mb-1.5" htmlFor="name">
-              Dancer Full Name <span className="text-[#B0104B]">*</span>
-            </label>
-            <input
-              className="w-full px-4 py-3 rounded-xl border-2 border-[#24102C]/15 bg-white text-[#24102C] focus:border-[#B0104B] focus:outline-none transition-colors"
-              id="name"
-              name="name"
-              required
-              autoComplete="name"
-              placeholder="e.g. Maya Sharma"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-[#24102C]/80 uppercase tracking-wider mb-1.5" htmlFor="forWhom">
-              Class Is For
-            </label>
-            <select
-              className="w-full px-4 py-3 rounded-xl border-2 border-[#24102C]/15 bg-white text-[#24102C] focus:border-[#B0104B] focus:outline-none transition-colors"
-              id="forWhom"
-              name="forWhom"
-              defaultValue=""
-            >
-              <option value="" disabled>Select category…</option>
-              {FOR_WHOM.map((o) => (
-                <option key={o} value={o}>{o}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-[#24102C]/80 uppercase tracking-wider mb-1.5" htmlFor="age">
-              Dancer Age <span className="font-normal text-[#24102C]/50">(if child/teen)</span>
-            </label>
-            <input
-              className="w-full px-4 py-3 rounded-xl border-2 border-[#24102C]/15 bg-white text-[#24102C] focus:border-[#B0104B] focus:outline-none transition-colors"
-              id="age"
-              name="age"
-              inputMode="numeric"
-              maxLength={3}
-              placeholder="e.g. 7"
-            />
-          </div>
-
-          <div className="sm:col-span-2">
-            <label className="block text-xs font-bold text-[#24102C]/80 uppercase tracking-wider mb-1.5" htmlFor="level">
-              Prior Dance Experience
-            </label>
-            <select
-              className="w-full px-4 py-3 rounded-xl border-2 border-[#24102C]/15 bg-white text-[#24102C] focus:border-[#B0104B] focus:outline-none transition-colors"
-              id="level"
-              name="level"
-              defaultValue=""
-            >
-              <option value="" disabled>Select experience level…</option>
-              {LEVELS.map((o) => (
-                <option key={o} value={o}>{o}</option>
-              ))}
-            </select>
-          </div>
+      <fieldset className="grid gap-5 sm:grid-cols-2">
+        <legend className="kicker mb-4">About the dancer</legend>
+        <div className="sm:col-span-2">
+          <label className="field-label" htmlFor="name">Name <span aria-hidden="true">*</span></label>
+          <input className="field" id="name" name="name" required autoComplete="name" />
+        </div>
+        <div>
+          <label className="field-label" htmlFor="forWhom">Trial class for</label>
+          <select className="field" id="forWhom" name="forWhom" defaultValue="">
+            <option value="" disabled>Select…</option>
+            {FOR_WHOM.map((o) => <option key={o}>{o}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="field-label" htmlFor="age">Age <span className="font-normal opacity-70">(if a child or teen)</span></label>
+          <input className="field" id="age" name="age" inputMode="numeric" maxLength={3} />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="field-label" htmlFor="level">Experience</label>
+          <select className="field" id="level" name="level" defaultValue="">
+            <option value="" disabled>Select…</option>
+            {LEVELS.map((o) => <option key={o}>{o}</option>)}
+          </select>
         </div>
       </fieldset>
 
-      {/* ── Dance Styles & Schedule ─────────────────────────────────── */}
-      <fieldset className="space-y-4">
-        <legend className="font-mono text-xs uppercase tracking-widest text-[#B0104B] font-bold">
-          02. Style Preferences & Availability
-        </legend>
-
-        <div>
-          <span className="block text-xs font-bold text-[#24102C]/80 uppercase tracking-wider mb-2">
-            Styles You Wish to Explore
-          </span>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {styles.map((s) => (
-              <label
-                key={s.name}
-                className="flex items-center gap-3 p-3 rounded-xl border border-[#24102C]/15 hover:border-[#B0104B]/50 hover:bg-[#B0104B]/5 cursor-pointer transition-colors text-sm font-semibold"
-              >
-                <input
-                  type="checkbox"
-                  name="styles"
-                  value={s.name}
-                  className="w-4 h-4 rounded text-[#B0104B] accent-[#B0104B]"
-                />
-                <span>{s.name}</span>
-              </label>
-            ))}
-            <label className="flex items-center gap-3 p-3 rounded-xl border border-[#24102C]/15 hover:border-[#B0104B]/50 hover:bg-[#B0104B]/5 cursor-pointer transition-colors text-sm font-semibold">
-              <input
-                type="checkbox"
-                name="styles"
-                value="Not sure yet"
-                className="w-4 h-4 rounded text-[#B0104B] accent-[#B0104B]"
-              />
-              <span>Not sure yet (Help me choose)</span>
-            </label>
-          </div>
+      <fieldset>
+        <legend className="kicker mb-4">What they want to try</legend>
+        <div className="flex flex-wrap gap-2.5">
+          {styles.map((s) => (
+            <label key={s.name} className="check"><input type="checkbox" name="styles" value={s.name} /> {s.name}</label>
+          ))}
+          <label className="check"><input type="checkbox" name="styles" value="Not sure yet" /> Not sure yet</label>
         </div>
-
-        <div>
-          <span className="block text-xs font-bold text-[#24102C]/80 uppercase tracking-wider mb-2 mt-4">
-            Preferred Days of the Week
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {DAYS.map((d) => (
-              <label
-                key={d}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-[#24102C]/15 hover:border-[#B0104B]/50 hover:bg-[#B0104B]/5 cursor-pointer transition-colors text-xs font-bold"
-              >
-                <input
-                  type="checkbox"
-                  name="days"
-                  value={d}
-                  className="w-3.5 h-3.5 rounded text-[#B0104B] accent-[#B0104B]"
-                />
-                <span>{d.toUpperCase()}</span>
-              </label>
-            ))}
-          </div>
+        <p className="field-label mt-7">Days that suit</p>
+        <div className="flex flex-wrap gap-2.5">
+          {DAYS.map((d) => (
+            <label key={d} className="check"><input type="checkbox" name="days" value={d} /> {d}</label>
+          ))}
         </div>
       </fieldset>
 
-      {/* ── Contact Info ────────────────────────────────────────────── */}
-      <fieldset className="space-y-4">
-        <legend className="font-mono text-xs uppercase tracking-widest text-[#B0104B] font-bold">
-          03. Parent / Guardian / Dancer Contact
-        </legend>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="block text-xs font-bold text-[#24102C]/80 uppercase tracking-wider mb-1.5" htmlFor="email">
-              Email Address <span className="text-[#B0104B]">*</span>
-            </label>
-            <input
-              className="w-full px-4 py-3 rounded-xl border-2 border-[#24102C]/15 bg-white text-[#24102C] focus:border-[#B0104B] focus:outline-none transition-colors"
-              id="email"
-              name="email"
-              type="email"
-              required
-              autoComplete="email"
-              placeholder="parent@example.com"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-[#24102C]/80 uppercase tracking-wider mb-1.5" htmlFor="phone">
-              Mobile Phone <span className="text-[#B0104B]">*</span>
-            </label>
-            <input
-              className="w-full px-4 py-3 rounded-xl border-2 border-[#24102C]/15 bg-white text-[#24102C] focus:border-[#B0104B] focus:outline-none transition-colors"
-              id="phone"
-              name="phone"
-              type="tel"
-              required
-              autoComplete="tel"
-              placeholder="(847) 555-0123"
-            />
-          </div>
-
-          <div className="sm:col-span-2">
-            <label className="block text-xs font-bold text-[#24102C]/80 uppercase tracking-wider mb-1.5" htmlFor="message">
-              Questions or Notes (Optional)
-            </label>
-            <textarea
-              className="w-full px-4 py-3 rounded-xl border-2 border-[#24102C]/15 bg-white text-[#24102C] focus:border-[#B0104B] focus:outline-none transition-colors"
-              id="message"
-              name="message"
-              rows={3}
-              maxLength={1200}
-              placeholder="e.g. Looking for a class with friends, or starting dance for the first time..."
-            />
-          </div>
+      <fieldset className="grid gap-5 sm:grid-cols-2">
+        <legend className="kicker mb-4">How to reach you</legend>
+        <div>
+          <label className="field-label" htmlFor="email">Email <span aria-hidden="true">*</span></label>
+          <input className="field" id="email" name="email" type="email" required autoComplete="email" />
+        </div>
+        <div>
+          <label className="field-label" htmlFor="phone">Phone <span aria-hidden="true">*</span></label>
+          <input className="field" id="phone" name="phone" type="tel" required autoComplete="tel" />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="field-label" htmlFor="message">Anything else we should know?</label>
+          <textarea className="field" id="message" name="message" rows={4} maxLength={1200} />
         </div>
       </fieldset>
 
       <div>
-        <button
-          type="submit"
-          className="btn btn-primary w-full py-4 text-base font-bold shadow-lg"
-        >
-          Confirm &amp; Request Trial Class Pass
-        </button>
-
+        <button type="submit" className="btn btn-primary w-full sm:w-auto">Open the email to send</button>
         {sent && (
-          <p className="mt-4 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium text-center">
-            Your mail client was opened. We look forward to welcoming you to the studio!
+          <p role="status" className="mt-4 rounded-xl bg-plum p-4 text-cream">
+            Your email app should have opened with the request written out. Press send there. If nothing opened, call{" "}
+            <a href={`tel:${site.phone}`} className="font-extrabold text-marigold underline underline-offset-4">{site.phoneDisplay}</a>.
           </p>
         )}
       </div>

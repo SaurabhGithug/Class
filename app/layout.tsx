@@ -17,11 +17,11 @@ const mono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"], variable: 
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: { default: "Bollywood Dance Classes for Kids, Teens & Adults | Toolieka", template: "%s | Toolieka Bollywood Dance Classes" },
+  title: { default: "The Legends of Bollywood | Bollywood Dance Classes for Kids, Teens & Adults", template: "%s | The Legends of Bollywood" },
   description: tagline,
   openGraph: {
     type: "website",
-    title: "Bollywood Dance Classes — Toolieka",
+    title: "The Legends of Bollywood — Bollywood Dance Classes",
     description: tagline,
     images: [{ url: heroPhoto.src, width: heroPhoto.w, height: heroPhoto.h, alt: heroPhoto.alt }],
     locale: "en_US",
@@ -45,7 +45,7 @@ function StructuredData() {
     url: site.url,
     telephone: site.phone,
     email: site.email,
-    areaServed: site.areas.map((a) => ({ "@type": "City", name: a })),
+    areaServed: { "@type": "Country", name: "United States" },
     founder: { "@type": "Person", name: site.name },
     sameAs: site.instagram.map((i) => i.url),
   };

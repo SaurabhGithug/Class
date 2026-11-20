@@ -13,6 +13,11 @@
  * childrenPhotosCleared to true. (Files under public/ are served to anyone who knows the
  * address, so leaving them there unreferenced would not keep them private.)
  */
+import { tlobLibrary, type LibraryPhoto } from "./library.ts";
+
+// 2026-11-20: switched on because the site owner said to add all images (as on the TLOB site, where
+// student photos are shown at the owner's request). Parents' permission is still to be confirmed —
+// set this back to false to hide every photo marked showsChildren in one step.
 export const childrenPhotosCleared = true;
 
 export interface Photo {
@@ -26,6 +31,10 @@ export interface Photo {
 
 const p = (file: string, w: number, h: number, alt: string): Photo => ({ src: `/images/${file}`, w, h, alt });
 const child = (ph: Photo): Photo => ({ ...ph, showsChildren: true });
+const fromLibrary = (l: LibraryPhoto): Photo => {
+  const ph = p(`tlob/${l.file}`, l.w, l.h, l.alt);
+  return l.showsChildren ? child(ph) : ph;
+};
 
 export const photos = {
   goldStage: child(p("kids-gold-stage.jpg", 1024, 858, "A large group of young dancers in matching gold, orange and blue costumes posing together on stage")),
@@ -70,4 +79,9 @@ export const gallery: readonly Photo[] = [
   photos.goldStage, photos.ganesha, photos.stageLights, photos.magentaSarees, photos.orangeStage, photos.whiteJackets,
   photos.backstage, photos.stagePose, photos.outdoor, photos.trophies2024, photos.trophiesGroup, photos.trophiesHallway,
   photos.boys, photos.saree, photos.instructorMagenta, photos.instructor,
+  ...tlobLibrary.filter((l) => !l.section).map(fromLibrary),
 ].filter(shown);
+
+/** The gallery page's other sections, each in library order. */
+export const librarySection = (section: NonNullable<LibraryPhoto["section"]>): Photo[] =>
+  tlobLibrary.filter((l) => l.section === section).map(fromLibrary).filter(shown);

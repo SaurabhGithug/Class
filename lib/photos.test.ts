@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { childrenPhotosCleared, gallery, heroPhoto, onStage, photos, type Photo } from "./photos.ts";
+import { tlobLibrary } from "./library.ts";
 
 const dir = path.join(process.cwd(), "public", "images");
 /** Photos of children wait here, unserved, until the parents' permission is confirmed. */
@@ -43,7 +44,9 @@ test("every photo has alt text that says something, and no two alts are the same
 test("the gallery shows each photo once, and nothing on disk is unused or unregistered", () => {
   assert.equal(new Set(gallery.map((g) => g.src)).size, gallery.length);
   const all = Object.values(photos);
-  assert.deepEqual(readdirSync(dir).sort(), all.filter((p) => !isHeld(p)).map(fileOf).sort(), "public/images matches the registry");
+  const files = readdirSync(dir).filter((f) => f !== "tlob");
+  assert.deepEqual(files.sort(), all.filter((p) => !isHeld(p)).map(fileOf).sort(), "public/images matches the registry");
+  assert.deepEqual(readdirSync(path.join(dir, "tlob")).sort(), tlobLibrary.map((l) => l.file).sort(), "public/images/tlob matches the library");
   assert.deepEqual(jpgs(held), all.filter(isHeld).map(fileOf).sort(), "photos-awaiting-permission matches the held photos");
 });
 
@@ -59,4 +62,21 @@ test("until the parents' permission is confirmed, no photo of children is served
 
 test("the wedding-scene photo from the other site is not in this one", () => {
   assert.ok(!readdirSync(dir).includes("hero-premium.jpg"));
+});
+
+test("every TLOB library photo is a real JPEG of its declared size, with its own alt text", () => {
+  const tlobDir = path.join(dir, "tlob");
+  for (const l of tlobLibrary) {
+    assert.ok(l.file.endsWith(".jpg"), l.file);
+    assert.deepEqual(jpegSize(l.file, tlobDir), { w: l.w, h: l.h }, l.file);
+    assert.ok(l.alt.length >= 20, l.file);
+  }
+  const alts = [...Object.values(photos).map((p) => p.alt), ...tlobLibrary.map((l) => l.alt)];
+  assert.equal(new Set(alts).size, alts.length, "no two photos share alt text");
+});
+
+test("the gallery follows the children switch for library photos too", () => {
+  const kids = tlobLibrary.filter((l) => l.showsChildren).length;
+  const shownKids = gallery.filter((g) => g.src.startsWith("/images/tlob/") && g.showsChildren).length;
+  assert.equal(shownKids, childrenPhotosCleared ? kids : 0);
 });
