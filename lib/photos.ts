@@ -29,7 +29,10 @@ export interface Photo {
   showsChildren?: true;
 }
 
-const p = (file: string, w: number, h: number, alt: string): Photo => ({ src: `/images/${file}`, w, h, alt });
+/** "" normally; "/Class" in the GitHub Pages build, where next/image does not add the base path itself. */
+// Written out in full so Next.js can inline it at build time.
+const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const p = (file: string, w: number, h: number, alt: string): Photo => ({ src: `${base}/images/${file}`, w, h, alt });
 const child = (ph: Photo): Photo => ({ ...ph, showsChildren: true });
 const fromLibrary = (l: LibraryPhoto): Photo => {
   const ph = p(`tlob/${l.file}`, l.w, l.h, l.alt);

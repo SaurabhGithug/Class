@@ -2,6 +2,9 @@ import type { MetadataRoute } from "next";
 import { site } from "@/lib/site";
 import { listPublished } from "@/lib/contentsathi/posts.ts";
 
+/** Built once at deploy time (required by the static GitHub Pages export; the same on Vercel). */
+export const dynamic = "force-static";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await listPublished();
   const pages: MetadataRoute.Sitemap = ["", "/classes", "/about", "/gallery", "/contact"].map((r) => ({
